@@ -1,32 +1,43 @@
+:root {
+    --cor-bem-clara: #ffe5ee;
+    --cor-primaria: #F7ADB7;
+    --cor-secundaria: #F5BCC7;
+    --cor-terciaria: #fdbacc;
+    --cor-quarta: #ffd0df;
+    --cor-escura: #fc7688;
+    --cor-mais-escura: #ff4f66;
+}
+
+
 body {
-    background-color: #e2e2e2;
-    color: #000000;
+    margin: 0;
+    padding: 0;
+    background-color: var(--cor-bem-clara);
     font-family: Arial, sans-serif;
 }
 
-h1, h2 { 
-	color: #000000; 
+header {
+    background-color: var(--cor-escura); /* Fundo branco para destacar do fundo rosa claro */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Uma sombra bem leve embaixo */
+    padding: 15px 0;
+    margin-bottom: 25px; /* Espaço entre a header e o bloco de Novo Agendamento */
+    width: 100%;
+    border-radius: 0 0 8px 8px;
 }
 
 .header-container {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr; /* Cria 3 colunas invisíveis */
-    align-items: center;
-    padding: 10px 40px; /* Margem interna para não encostar na borda da tela */
-    max-width: 1200px;
     margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between; /* Joga o título para a esquerda e a pesquisa para a direita */
+    align-items: center; /* Centraliza os dois verticalmente */
 }
 
-h1 {
-    grid-column: 2; /* Mantém o título na coluna central */
-}
-
-.search-box {
-    grid-column: 3;
-    justify-self: end;
-    display: flex; /* Adicionado para alinhar input e botão lado a lado */
-    align-items: center; /* Centraliza verticalmente um com o outro */
-    gap: 0px; /* Espaço entre o campo e o botão */
+.header-title {
+    color: var(--cor-bem-clara); /* Mantendo a cor viva que você já está usando */
+    font-size: 28px;
+    margin: 0;
+    font-weight: bold;
 }
 
 .input-wrapper {
@@ -35,14 +46,13 @@ h1 {
     align-items: center;
 }
 
-#search-input {
-    width: 250px;
-    padding: 10px 35px 10px 15px; /* Espaço na direita para o X */
-    border: 1px solid #3498db;
+.input-wrapper input {
+    padding: 8px 15px;
+    border: 1px solid var(--cor-escura);
     border-radius: 8px;
-    outline: none;
-    height: 40px;
-    box-sizing: border-box;
+    outline-color: var(--cor-escura);
+    width: 180px;
+    transition: all 0.3s ease;
 }
 
 /* Estilo do botão X */
@@ -64,14 +74,14 @@ h1 {
 }
 
 section {
-    border: 1px solid #333;
+    border: 1px solid var(--cor-escura);
     padding: 10px;
-    margin-bottom: 10px;
+    margin: 10px;
     border-radius: 8px;
 }
 
 button {
-    background-color: #378dd4;
+    background-color: var(--cor-escura);
     color: #ffffff;
     border: none;
 	border-radius: 4px;
@@ -82,17 +92,17 @@ button {
 }
 
 button:hover {
-    background-color: #126297;
+    background-color: var(--cor-mais-escura);
 }
 
 input, select {
-    background: #ffffff;
-    color: rgb(0, 0, 0);
-    border: 1px solid #378dd4;
+    background: var(--cor-bem-clara);
+    color: var(--cor-mais-escura);
+    border: 1px solid var(--cor-escura);
 	border-radius: 4px;
     padding: 8px;
     margin: 10px;
-	outline: none;
+    outline-color: var(--cor-mais-escura);
     cursor: pointer;
 }
 
@@ -100,7 +110,7 @@ input, select {
 .calendar-container {
     max-width: 900px;
     margin: 20px auto;
-    background: #f5f5f5;
+    background: var(--cor-quarta);
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.08); /* Sombra suave ao redor */
@@ -120,14 +130,14 @@ input, select {
 }
 
 #calendar-table th {
-    color: #3498db;
+    color: var(--cor-escura);
     font-weight: bold;
     padding-bottom: 10px;
 }
 
 #calendar-table td {
-    background-color: #fff;
-    border: 1px solid #edf2f7; /* Borda bem clarinha */
+    background-color: var(--cor-terciaria);
+    border: 1px solid var(--cor-terciaria); /* Borda bem clarinha */
     border-radius: 10px;       /* Bordas arredondadas */
     height: 100px;
     width: 18%;
@@ -141,7 +151,7 @@ input, select {
 #calendar-table td:hover {
     transform: translateY(-3px); /* Levanta levemente */
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    border-color: #3498db;
+    border-color: var(--cor-escura);
 }
 
 /* Numeros dos dias do calendario*/
@@ -154,7 +164,7 @@ input, select {
 /* Parte dos eventos no calendario */
 .evento-mini {
     font-size: 10px;
-    background: #378dd4;
+    background: var(--cor-mais-escura);
     color: #ffffff;
     margin-bottom: 2px;
     padding: 2px;
@@ -170,9 +180,9 @@ input, select {
 /* Título da seção */
 h2 {
     margin-top: 0;
-    color: #333;
+    color: var(--cor-mais-escura);
     font-size: 1.5em;
-    border-bottom: 2px solid #3498db;
+    border-bottom: 2px solid var(--cor-escura);
     padding-bottom: 10px;
     margin-bottom: 20px;
 }
@@ -186,8 +196,8 @@ h2 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #f8f9fa;
-    border-left: 5px solid #3498db; /* Faixa lateral azul */
+    background: var(--cor-quarta);
+    border-left: 5px solid var(--cor-escura); /* Faixa lateral */
     padding: 15px;
     margin-bottom: 12px;
     border-radius: 6px;
@@ -197,6 +207,7 @@ h2 {
 
 .card-evento:hover {
     transform: translateX(5px); /* Pequeno efeito ao passar o mouse */
+    background-color: var(--cor-primaria);
 }
 
 /* Informações de Texto (Horário e Nome) */
@@ -263,7 +274,7 @@ h2 {
 
 /* Classe para o dia que foi clicado/selecionado */
 .dia-selecionado {
-    background-color: #ebf8ff !important;
-    border: 2px solid #3498db !important;
+    background-color: var(--cor-primaria) !important;
+    border: 2px solid var(--cor-escura) !important;
     box-shadow: 0 0 10px rgba(52, 152, 219, 0.2) !important;
 }

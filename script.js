@@ -246,7 +246,7 @@ window.pesquisarAluno = () => {
     );
 
     const list = document.getElementById('events-list');
-    list.innerHTML = `<h3 style="margin-bottom: 15px; color: #3498db;">Resultados para "${input.value}":</h3>`;
+    list.innerHTML = `<h3 style="margin-bottom: 15px; color: var(--cor-escura);">Resultados para "${input.value}":</h3>`;
     
     if (resultados.length === 0) {
         list.innerHTML += `<p style="text-align:center; color:#888;">Nenhum aluno encontrado para os próximos dias.</p>`;
@@ -262,7 +262,7 @@ window.pesquisarAluno = () => {
             <div class="info-evento">
                 <strong>${a.horario}</strong>
                 <span>${a.aluno}</span>
-                <small style="color: #3498db; font-weight: bold;">Data: ${a.data.split('-').reverse().join('/')}</small>
+                <small style="color: var(--cor-mais-escura); font-weight: bold;">Data: ${a.data.split('-').reverse().join('/')}</small>
             </div>
             <div class="acoes-evento">
                 <button class="btn-editar" onclick="event.stopPropagation(); editarEventoDoResultado('${a.id}')">✎</button>

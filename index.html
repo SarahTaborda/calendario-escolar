@@ -8,7 +8,7 @@
 	<body>
 		<header>
 			<div class="header-container">
-				<h1>Calendário de Atendimentos</h1>
+				<h1 class="header-title">Calendário de Atendimentos</h1>
 				<div class="search-box">
 					<div class="input-wrapper">
 						<input type="text" id="search-input" placeholder="Pesquisar nome do aluno..." onkeyup="pesquisarAluno()">
@@ -35,7 +35,7 @@
 				<!-- Container da Lista de Compromissos -->
 				<div class="appointments-container">
 					<div class="header-compromissos">
-    					<h2>Compromissos do Dia <span id="data-dinamica" style="color: #666; font-size: 0.8em; margin-left: 10px;"></span></h2>
+    					<h2>Compromissos do Dia <span id="data-dinamica" style="color: var(--cor-mais-escura); font-size: 0.8em; margin-left: 10px;"></span></h2>
 					</div>
 					
 					<!-- É aqui que o JavaScript vai "injetar" as caixinhas (cards) -->
