@@ -8,12 +8,36 @@
     --cor-mais-escura: #ff4f66;
 }
 
-
 body {
     margin: 0;
     padding: 0;
     background-color: var(--cor-bem-clara);
     font-family: Arial, sans-serif;
+}
+
+/* Container fixo no topo e centralizado */
+.notificacao-toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50px);
+    background-color: #2e7d32; /* Verde elegante para sucesso */
+    color: #ffffff;
+    padding: 12px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    font-weight: bold;
+    font-size: 15px;
+    z-index: 10000; /* Garante que fica por cima de tudo, até da header */
+    opacity: 0;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+    pointer-events: none; /* Não atrapalha cliques se estiver invisível */
+}
+
+/* Classe que ativa a aparição da notificação */
+.notificacao-toast.mostrar {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
 }
 
 header {
@@ -208,6 +232,20 @@ h2 {
 .card-evento:hover {
     transform: translateX(5px); /* Pequeno efeito ao passar o mouse */
     background-color: var(--cor-primaria);
+}
+
+/* Quando o card for urgente, ganha fundo vermelho claro e borda marcante */
+.card-evento.urgente {
+    border-left: 6px solid #ff0000 !important;
+}
+
+.evento-mini.mini-urgente {
+    background-color: #ff0000 !important; /* Vermelho mais forte para dar leitura no texto branco */
+}
+
+.select-personalizado {
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-weight: bold;
 }
 
 /* Informações de Texto (Horário e Nome) */

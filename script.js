@@ -1,5 +1,6 @@
 // 1. Variáveis Globais e Conexão com Firebase
 let agendamentosSimulados = [];
+let idEventoEmEdicao = null; // LINHA NOVA: Guarda o ID do evento que estamos editando
 
 // Escuta o banco de dados em tempo real
 database.ref('agendamentos').on('value', (snapshot) => {
@@ -46,12 +47,13 @@ const gerarTodosHorarios = () => {
     return horarios;
 };
 
-window.atualizarHorariosLivres = () => {
+window.atualizarHorariosLivres = (horarioSendoEditado = null) => {
     const dataAlvo = document.getElementById('booking-date').value;
     const select = document.getElementById('free-slots');
     
+    // Filtra os ocupados, mas IGNORA o horário que está sendo editado neste momento
     const ocupados = agendamentosSimulados
-        .filter(a => a.data === dataAlvo)
+        .filter(a => a.data === dataAlvo && a.horario !== horarioSendoEditado)
         .map(a => a.horario);
 
     const todos = gerarTodosHorarios();
@@ -59,7 +61,9 @@ window.atualizarHorariosLivres = () => {
 
     select.innerHTML = '<option value="">Selecione um horário</option>';
     livres.forEach(h => {
-        select.innerHTML += `<option value="${h}">${h}</option>`;
+        // Se o horário for o que está sendo editado, deixa ele marcado como selecionado
+        const selecionado = h === horarioSendoEditado ? 'selected' : '';
+        select.innerHTML += `<option value="${h}" ${selecionado}>${h}</option>`;
     });
 
     renderizarCompromissos(dataAlvo);
@@ -70,7 +74,6 @@ const renderizarCompromissos = (data) => {
     const list = document.getElementById('events-list');
     const displayData = document.getElementById('data-dinamica');
     
-    // Atualiza o texto da data ao lado do título
     if (data) {
         const dataFormatada = data.split('-').reverse().join('/');
         displayData.innerText = `- ${dataFormatada}`;
@@ -87,39 +90,88 @@ const renderizarCompromissos = (data) => {
         return;
     }
 
-    list.innerHTML = doDia.map((a, index) => `
-        <div class="card-evento">
-            <div class="info-evento">
-                <strong>${a.horario}</strong>
-                <span>${a.aluno}</span>
+    list.innerHTML = doDia.map((a, index) => {
+        // Se for urgente, adiciona uma classe extra para pintar de vermelho
+        const classeUrgente = a.cor === 'urgente' ? 'urgente' : '';
+
+        return `
+            <div class="card-evento ${classeUrgente}">
+                <div class="info-evento">
+                    <strong>${a.horario}</strong>
+                    <span>${a.aluno}</span>
+                </div>
+                <div class="acoes-evento">
+                    <button class="btn-editar" onclick="editarEvento(${index}, '${data}')">✎</button>
+                    <button class="btn-excluir" onclick="excluirEvento(${index}, '${data}')">&times;</button>
+                </div>
             </div>
-            <div class="acoes-evento">
-                <button class="btn-editar" onclick="editarEvento(${index}, '${data}')">✎</button>
-                <button class="btn-excluir" onclick="excluirEvento(${index}, '${data}')">&times;</button>
-            </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 };
 
 // 4. Salvar, Editar e Excluir (Firebase)
 window.salvarAgendamento = () => {
     const nome = document.getElementById('student-name').value;
     const data = document.getElementById('booking-date').value;
-    const horario = document.getElementById('free-slots').value;
+    // Pega o valor do select de horários
+    let horario = document.getElementById('free-slots').value;
+
+    // Se o select de horários estiver vazio mas estamos editando, 
+    // precisamos recuperar o horário antigo que foi bloqueado para o usuário
+    if (idEventoEmEdicao && !horario) {
+        const itemSendoEditado = agendamentosSimulados.find(a => a.id === idEventoEmEdicao);
+        if (itemSendoEditado) {
+            horario = itemSendoEditado.horario;
+        }
+    }
 
     if (!nome || !data || !horario) {
         alert("Preencha todos os campos!");
         return;
     }
 
-    database.ref('agendamentos').push({
+    // Criamos o objeto completo com os dados atualizados para salvar
+    let dadosAgendamento = {
         aluno: nome,
         data: data,
-        horario: horario
-    }).then(() => {
-        document.getElementById('student-name').value = '';
-    });
+        horario: horario, // Garante que o horário correto seja persistido
+        cor: document.getElementById('event-color').value
+    };
+
+    if (idEventoEmEdicao) {
+        // Atualiza o evento existente sem duplicar e sem perder a trava do horário
+        database.ref('agendamentos/' + idEventoEmEdicao).update(dadosAgendamento)
+        .then(() => {
+            mostrarNotificacao("Editado com sucesso!");
+            finalizarSalvamento();
+        });
+    } else {
+        // Cria um novo agendamento normal
+        database.ref('agendamentos').push(dadosAgendamento)
+        .then(() => {
+            mostrarNotificacao("Salvo com sucesso!");
+            finalizarSalvamento();
+        });
+    }
 };
+
+// Certifique-se de que a sua função finalizarSalvamento limpe o select e chame a atualização:
+function finalizarSalvamento() {
+    document.getElementById('student-name').value = '';
+    document.getElementById('event-color').value = 'normal';
+    document.getElementById('free-slots').value = ''; // Reseta o campo de horários
+    idEventoEmEdicao = null; 
+    window.atualizarCorDoSelect();
+    window.atualizarHorariosLivres(); // Força o sistema a recalcular e sumir com o horário ocupado
+}
+
+// Função auxiliar para limpar os campos e resetar o estado de edição
+function finalizarSalvamento() {
+    document.getElementById('student-name').value = '';
+    document.getElementById('event-color').value = 'normal';
+    idEventoEmEdicao = null; // Limpa o ID para o próximo agendamento não entrar como edição
+    window.atualizarCorDoSelect();
+}
 
 window.excluirEvento = (index, data) => {
     if (confirm("Deseja realmente excluir este agendamento?")) {
@@ -139,10 +191,37 @@ window.editarEvento = (index, data) => {
     document.getElementById('student-name').value = item.aluno;
     document.getElementById('booking-date').value = item.data;
     
-    // Remove do banco para substituir pelo novo ao clicar em salvar
-    database.ref('agendamentos/' + item.id).remove();
+    const selectCor = document.getElementById('event-color');
+    selectCor.value = item.cor || 'normal'; 
+    window.atualizarCorDoSelect(); 
     
-    alert("Dados carregados! Altere e clique em 'Marcar Horário'.");
+    idEventoEmEdicao = item.id; 
+    
+    // --- MUDANÇA AQUI: Passamos o horário antigo para atualizar a lista e manter ele visível ---
+    window.atualizarHorariosLivres(item.horario);
+    
+    mostrarNotificacao("Modo de edição ativado!");
+};
+
+window.editarEventoDoResultado = (id) => {
+    const item = agendamentosSimulados.find(a => a.id === id);
+    
+    if (item) {
+        document.getElementById('student-name').value = item.aluno;
+        document.getElementById('booking-date').value = item.data;
+        
+        const selectCor = document.getElementById('event-color');
+        selectCor.value = item.cor || 'normal';
+        window.atualizarCorDoSelect();
+        
+        idEventoEmEdicao = item.id; 
+        
+        // --- MUDANÇA AQUI TAMBÉM: ---
+        window.atualizarHorariosLivres(item.horario);
+        
+        mostrarNotificacao("Modo de edição ativado!");
+        document.getElementById('search-input').value = "";
+    }
 };
 
 // 5. Calendário
@@ -193,7 +272,10 @@ function gerarCalendario() {
             .sort((a, b) => a.horario.localeCompare(b.horario));
 
         eventos.forEach(ev => {
-            celula.innerHTML += `<div class="evento-mini">${ev.horario} ${ev.aluno}</div>`;
+            // Verifica se o evento é urgente para colocar a classe extra
+            const classeMiniUrgente = ev.cor === 'urgente' ? 'mini-urgente' : '';
+
+            celula.innerHTML += `<div class="evento-mini ${classeMiniUrgente}">${ev.horario} ${ev.aluno}</div>`;
         });
 
         celula.onclick = () => {
@@ -309,14 +391,25 @@ window.excluirEventoDoResultado = (index) => {
     }
 };
 
-window.editarEventoDoResultado = (index) => {
-    const item = agendamentosSimulados[index];
-    document.getElementById('student-name').value = item.aluno;
-    document.getElementById('booking-date').value = item.data;
-    database.ref('agendamentos/' + item.id).remove().then(() => {
-        alert("Altere e salve.");
-        document.getElementById('search-input').value = "";
-    });
+window.editarEventoDoResultado = (id) => {
+    // Buscamos o item diretamente pelo ID que veio do banco
+    const item = agendamentosSimulados.find(a => a.id === id);
+    
+    if (item) {
+        document.getElementById('student-name').value = item.aluno;
+        document.getElementById('booking-date').value = item.data;
+        
+        // --- LINHAS NOVAS AQUI: ---
+        const selectCor = document.getElementById('event-color');
+        selectCor.value = item.cor || 'normal';
+        window.atualizarCorDoSelect(); // Pinta a caixinha na hora!
+        // --------------------------
+        
+        database.ref('agendamentos/' + item.id).remove().then(() => {
+            alert("Altere e salve.");
+            document.getElementById('search-input').value = "";
+        });
+    }
 };
 
 // Funções de Navegação do Calendário
@@ -334,3 +427,32 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. O Firebase já vai chamar o gerarCalendario() automaticamente 
     // assim que terminar de carregar os dados (pelo database.ref().on)
 });
+
+// Função para mudar a cor de fundo do próprio select na hora de criar o evento
+window.atualizarCorDoSelect = () => {
+    const select = document.getElementById('event-color');
+    
+    if (select.value === 'urgente') {
+        select.style.backgroundColor = '#ff4d4d'; // Vermelho vivo
+        select.style.color = '#ffffff';           // Texto branco para dar leitura
+        select.style.borderColor = '#c02626';
+    } else {
+        select.style.backgroundColor = 'var(--cor-escura)';        // Volta pro fundo padrão do seu layout
+        select.style.color = '#ffff';                  // Volta pra cor de texto padrão
+        select.style.borderColor = '';
+    }
+};
+
+// Função para mostrar notificações automáticas que somem sozinhas
+function mostrarNotificacao(mensagem) {
+    const toast = document.getElementById('notificacao-container');
+    toast.innerText = mensagem;
+    
+    // Adiciona a classe que faz deslizar para baixo e aparecer
+    toast.classList.add('mostrar');
+
+    // Depois de 3 segundos (3000 milissegundos), remove a classe para sumir
+    setTimeout(() => {
+        toast.classList.remove('mostrar');
+    }, 3000);
+}

@@ -6,6 +6,7 @@
 		<link rel="stylesheet" href="style.css">
 	</head>
 	<body>
+		<div id="notificacao-container" class="notificacao-toast"></div>
 		<header>
 			<div class="header-container">
 				<h1 class="header-title">Calendário de Atendimentos</h1>
@@ -28,6 +29,10 @@
 					<option value="">Selecione um horário</option>
 				</select>
 				<input type="text" id="student-name" placeholder="Evento">
+				<select id="event-color" class="select-personalizado" onchange="window.atualizarCorDoSelect()">
+    				<option value="normal">Rosa</option>
+    				<option value="urgente">Vermelho</option>
+				</select>
 				<button onclick="salvarAgendamento()">Marcar Horário</button>
 			</section>
 
