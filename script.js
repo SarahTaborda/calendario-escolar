@@ -26,19 +26,24 @@ const gerarTodosHorarios = () => {
     let horarios = [];
     // Mudamos o limite para ser estritamente MENOR que 17
     for (let h = 8; h < 17; h++) {
-        if (h === 12) continue; // Pula o almoço
+        if (h === 12) continue; // Pula o horário de almoço das 12h00 às 12h59
 
-        // Adiciona a hora cheia (ex: 08:00, 09:00... até 16:00)
-        horarios.push(`${h.toString().padStart(2, '0')}:00`);
-        
-        // Adiciona o :30 apenas se NÃO for 17h (como o loop para antes de 17, 
-        // ele vai adicionar o 16:30 e depois sair do loop)
-        if (h <= 16) {
-            // Se você quer que pare em 16:30, esta condição garante isso
-            horarios.push(`${h.toString().padStart(2, '0')}:30`);
+        // Passa de 15 em 15 minutos dentro de cada hora
+        for (let m = 0; m < 60; m += 15) {
+            
+            // Trava de segurança: Se chegar na hora 16 e o minuto passar de 30, ignora (para não criar 16:45)
+            if (h === 16 && m > 30) {
+                continue;
+            }
+
+            // Formata a hora e o minuto para ficarem sempre com 2 dígitos (ex: 08:00, 08:15)
+            const horaFormatada = h.toString().padStart(2, '0');
+            const minutoFormatado = m.toString().padStart(2, '0');
+            
+            horarios.push(`${horaFormatada}:${minutoFormatado}`);
         }
     }
-    return horarios
+    return horarios;
 };
 
 window.atualizarHorariosLivres = () => {
