@@ -188,7 +188,7 @@ input, select {
 /* Parte dos eventos no calendario */
 .evento-mini {
     font-size: 10px;
-    background: var(--cor-mais-escura);
+    background: var(--cor-escura);
     color: #ffffff;
     margin-bottom: 2px;
     padding: 2px;
