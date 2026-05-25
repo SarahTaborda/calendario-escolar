@@ -1,17 +1,16 @@
 :root {
-    --cor-bem-clara: #ffe5ee;
-    --cor-primaria: #F7ADB7;
-    --cor-secundaria: #F5BCC7;
-    --cor-terciaria: #fdbacc;
-    --cor-quarta: #ffd0df;
-    --cor-escura: #fc7688;
-    --cor-mais-escura: #ff4f66;
+    --cor-secundaria: #4c3d19;
+    --cor-terciaria: #e5d7c4;
+    --cor-quarta: #fae9d1;
+    --cor-primaria: #a4ad78;
+    --cor-mais-escura: #354024;
+    --cor-clara: #ceda97;
 }
 
 body {
     margin: 0;
     padding: 0;
-    background-color: var(--cor-bem-clara);
+    background-color: var(--cor-quarta);
     font-family: Arial, sans-serif;
 }
 
@@ -41,7 +40,7 @@ body {
 }
 
 header {
-    background-color: var(--cor-escura); /* Fundo branco para destacar do fundo rosa claro */
+    background-color: var(--cor-mais-escura);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Uma sombra bem leve embaixo */
     padding: 15px 0;
     margin-bottom: 25px; /* Espaço entre a header e o bloco de Novo Agendamento */
@@ -58,7 +57,7 @@ header {
 }
 
 .header-title {
-    color: var(--cor-bem-clara); /* Mantendo a cor viva que você já está usando */
+    color: var(--cor-quarta); /* Mantendo a cor viva que você já está usando */
     font-size: 28px;
     margin: 0;
     font-weight: bold;
@@ -72,9 +71,9 @@ header {
 
 .input-wrapper input {
     padding: 8px 15px;
-    border: 1px solid var(--cor-escura);
+    border: 1px solid var(--cor-primaria);
     border-radius: 8px;
-    outline-color: var(--cor-escura);
+    outline-color: var(--cor-primaria);
     width: 180px;
     transition: all 0.3s ease;
 }
@@ -98,14 +97,14 @@ header {
 }
 
 section {
-    border: 1px solid var(--cor-escura);
+    border: 1px solid var(--cor-secundaria);
     padding: 10px;
     margin: 10px;
     border-radius: 8px;
 }
 
 button {
-    background-color: var(--cor-escura);
+    background-color: var(--cor-primaria);
     color: #ffffff;
     border: none;
 	border-radius: 4px;
@@ -120,9 +119,9 @@ button:hover {
 }
 
 input, select {
-    background: var(--cor-bem-clara);
+    background: var(--cor-quarta);
     color: var(--cor-mais-escura);
-    border: 1px solid var(--cor-escura);
+    border: 1px solid var(--cor-secundaria);
 	border-radius: 4px;
     padding: 8px;
     margin: 10px;
@@ -134,7 +133,7 @@ input, select {
 .calendar-container {
     max-width: 900px;
     margin: 20px auto;
-    background: var(--cor-quarta);
+    background: var(--cor-terciaria); /*Cor de fundo do calendario*/
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.08); /* Sombra suave ao redor */
@@ -154,13 +153,13 @@ input, select {
 }
 
 #calendar-table th {
-    color: var(--cor-escura);
+    color: var(--cor-secundaria);
     font-weight: bold;
     padding-bottom: 10px;
 }
 
 #calendar-table td {
-    background-color: var(--cor-terciaria);
+    background-color: var(--cor-quarta);
     border: 1px solid var(--cor-terciaria); /* Borda bem clarinha */
     border-radius: 10px;       /* Bordas arredondadas */
     height: 100px;
@@ -175,24 +174,26 @@ input, select {
 #calendar-table td:hover {
     transform: translateY(-3px); /* Levanta levemente */
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    border-color: var(--cor-escura);
+    border-color: var(--cor-mais-escura);
+    background-color: rgb(233, 218, 218);
 }
 
 /* Numeros dos dias do calendario*/
 .dia-numero {
     font-weight: bold;
-    color: #2d3748;
+    color: var(--cor-secundaria);
     font-size: 0.95em;
 }
 
 /* Parte dos eventos no calendario */
 .evento-mini {
     font-size: 10px;
-    background: var(--cor-escura);
+    font-style: bold;
     color: #ffffff;
     margin-bottom: 2px;
     padding: 2px;
     border-radius: 2px;
+    font-weight: bold;
 }
 
 /* Container principal da lista lateral */
@@ -206,7 +207,7 @@ h2 {
     margin-top: 0;
     color: var(--cor-mais-escura);
     font-size: 1.5em;
-    border-bottom: 2px solid var(--cor-escura);
+    border-bottom: 2px solid var(--cor-primaria);
     padding-bottom: 10px;
     margin-bottom: 20px;
 }
@@ -220,8 +221,8 @@ h2 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: var(--cor-quarta);
-    border-left: 5px solid var(--cor-escura); /* Faixa lateral */
+    background: var(--cor-terciaria);
+    border-left: 5px solid var(--cor-mais-escura); /* Faixa lateral */
     padding: 15px;
     margin-bottom: 12px;
     border-radius: 6px;
@@ -231,21 +232,7 @@ h2 {
 
 .card-evento:hover {
     transform: translateX(5px); /* Pequeno efeito ao passar o mouse */
-    background-color: var(--cor-primaria);
-}
-
-/* Quando o card for urgente, ganha fundo vermelho claro e borda marcante */
-.card-evento.urgente {
-    border-left: 6px solid #ff0000 !important;
-}
-
-.evento-mini.mini-urgente {
-    background-color: #ff0000 !important; /* Vermelho mais forte para dar leitura no texto branco */
-}
-
-.select-personalizado {
-    transition: background-color 0.3s ease, color 0.3s ease;
-    font-weight: bold;
+    background-color: rgb(250, 231, 231);
 }
 
 /* Informações de Texto (Horário e Nome) */
@@ -312,16 +299,16 @@ h2 {
 
 /* Classe para o dia que foi clicado/selecionado */
 .dia-selecionado {
-    background-color: var(--cor-primaria) !important;
-    border: 2px solid var(--cor-escura) !important;
+    background-color: rgb(226, 216, 216) !important;
+    border: 2px solid var(--cor-secundaria) !important;
     box-shadow: 0 0 10px rgba(52, 152, 219, 0.2) !important;
 }
 
 footer {
-    background-color: var(--cor-escura); /* Fundo branco para destacar do fundo rosa claro */
+    background-color: var(--cor-mais-escura); /* Fundo branco para destacar do fundo rosa claro */
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Uma sombra bem leve embaixo */
     padding: 15px 0;
-    margin-top: 25px; /* Espaço entre a header e o bloco de Novo Agendamento */
+    margin-top: 25px;
     width: 100%;
     border-radius: 8px 8px 0 0;
     text-align: center;
@@ -330,4 +317,21 @@ footer {
 footer p {
     color: #ffffff;
     font-family: monospace;
+    font-size: 10px;
+}
+
+/* Garante que o select personalizado fique bonito com qualquer cor de fundo */
+.select-personalizado {
+    color: #ffffff !important;
+    font-weight: bold;
+    border-radius: 4px;
+    padding: 7px 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Deixa as opções de dentro da lista com fundo escuro padrão para não sumir o texto */
+.select-personalizado option {
+    background-color: #333333 !important;
+    color: #ffffff !important;
 }

@@ -2,14 +2,14 @@
 <html lang="pt-br">
 	<head>
 		<meta charset="UTF-8">
-		<title>Calendário de Atendimentos</title>
+		<title>Agenda de Atendimentos</title>
 		<link rel="stylesheet" href="style.css">
 	</head>
 	<body>
 		<div id="notificacao-container" class="notificacao-toast"></div>
 		<header>
 			<div class="header-container">
-				<h1 class="header-title">Calendário de Atendimentos</h1>
+				<h1 class="header-title">Agenda de Atendimentos</h1>
 				<div class="search-box">
 					<div class="input-wrapper">
 						<input type="text" id="search-input" placeholder="Pesquisar nome do aluno..." onkeyup="pesquisarAluno()">
@@ -30,8 +30,10 @@
 				</select>
 				<input type="text" id="student-name" placeholder="Evento">
 				<select id="event-color" class="select-personalizado" onchange="window.atualizarCorDoSelect()">
-    				<option value="normal">Rosa</option>
-    				<option value="urgente">Vermelho</option>
+    				<option value="#4a6b42">Verde</option>
+    				<option value="#c02626">Vermelho</option>
+					<option value="#2b5c8f">Azul</option>
+					<option value="#ff6b8b">Rosa</option>
 				</select>
 				<button onclick="salvarAgendamento()">Marcar Horário</button>
 			</section>

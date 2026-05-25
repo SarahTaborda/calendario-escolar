@@ -91,11 +91,10 @@ const renderizarCompromissos = (data) => {
     }
 
     list.innerHTML = doDia.map((a, index) => {
-        // Se for urgente, adiciona uma classe extra para pintar de vermelho
-        const classeUrgente = a.cor === 'urgente' ? 'urgente' : '';
+        let corCard = a.cor || '#4a6b42';
 
         return `
-            <div class="card-evento ${classeUrgente}">
+            <div class="card-evento" style="border-left: 6px solid ${corCard} !important;">
                 <div class="info-evento">
                     <strong>${a.horario}</strong>
                     <span>${a.aluno}</span>
@@ -126,7 +125,7 @@ window.salvarAgendamento = () => {
     }
 
     if (!nome || !data || !horario) {
-        alert("Preencha todos os campos!");
+       mostrarNotificacao("Preencha todos os campo!");
         return;
     }
 
@@ -168,9 +167,11 @@ function finalizarSalvamento() {
 // Função auxiliar para limpar os campos e resetar o estado de edição
 function finalizarSalvamento() {
     document.getElementById('student-name').value = '';
-    document.getElementById('event-color').value = 'normal';
-    idEventoEmEdicao = null; // Limpa o ID para o próximo agendamento não entrar como edição
-    window.atualizarCorDoSelect();
+    document.getElementById('event-color').value = 'var(--cor-mais-escura)'; // Reseta para o valor do Rosa
+    document.getElementById('free-slots').value = ''; 
+    idEventoEmEdicao = null; 
+    window.atualizarCorDoSelect(); // Repinta como a cor
+    window.atualizarHorariosLivres(); 
 }
 
 window.excluirEvento = (index, data) => {
@@ -235,7 +236,6 @@ function gerarCalendario() {
     const ano = dataAtual.getFullYear();
     const mes = dataAtual.getMonth();
     
-    // 1. Pegamos a data que está escrita no campo de "Novo Agendamento"
     const dataSelecionadaNoInput = document.getElementById('booking-date').value;
 
     const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
@@ -260,7 +260,6 @@ function gerarCalendario() {
         let celula = document.createElement("td");
         const dataFormatada = `${ano}-${(mes + 1).toString().padStart(2, '0')}-${dia.toString().padStart(2, '0')}`;
         
-        // 2. Comparamos: se o dia do calendário for igual ao do input, aplicamos a classe
         if (dataFormatada === dataSelecionadaNoInput) {
             celula.classList.add('dia-selecionado');
         }
@@ -271,16 +270,22 @@ function gerarCalendario() {
             .filter(e => e.data === dataFormatada)
             .sort((a, b) => a.horario.localeCompare(b.horario));
 
+        // --- CÓDIGO DO EVENTO MINI SEM REGRAS AUTOMÁTICAS ---
         eventos.forEach(ev => {
-            // Verifica se o evento é urgente para colocar a classe extra
-            const classeMiniUrgente = ev.cor === 'urgente' ? 'mini-urgente' : '';
+            // Usa estritamente a cor salva no banco (ev.cor). Se não houver nenhuma, usa o Rosa padrão (#ff6b8b)
+            let corFinal = ev.cor || '#4a6b42';
 
-            celula.innerHTML += `<div class="evento-mini ${classeMiniUrgente}">${ev.horario} ${ev.aluno}</div>`;
+            let divEvento = document.createElement("div");
+            divEvento.className = "evento-mini";
+            divEvento.innerText = `${ev.horario} ${ev.aluno}`;
+            divEvento.style.setProperty('background-color', corFinal, 'important'); // Aplica a cor escolhida por você
+
+            celula.appendChild(divEvento);
         });
 
         celula.onclick = () => {
             document.getElementById('booking-date').value = dataFormatada;
-            gerarCalendario(); // Redesenha para mudar o destaque de lugar
+            gerarCalendario(); 
             atualizarHorariosLivres();
         };
         
@@ -333,7 +338,7 @@ window.pesquisarAluno = () => {
     );
 
     const list = document.getElementById('events-list');
-    list.innerHTML = `<h3 style="margin-bottom: 15px; color: var(--cor-escura);">Resultados para "${input.value}":</h3>`;
+    list.innerHTML = `<h3 style="margin-bottom: 15px; color: var(--cor-secundaria);">Resultados para "${input.value}":</h3>`;
     
     if (resultados.length === 0) {
         list.innerHTML += `<p style="text-align:center; color:#888;">Nenhum aluno encontrado para os próximos dias.</p>`;
@@ -349,7 +354,7 @@ window.pesquisarAluno = () => {
             <div class="info-evento">
                 <strong>${a.horario}</strong>
                 <span>${a.aluno}</span>
-                <small style="color: var(--cor-mais-escura); font-weight: bold;">Data: ${a.data.split('-').reverse().join('/')}</small>
+                <small style="color: var(--cor-secundaria); font-weight: bold;">Data: ${a.data.split('-').reverse().join('/')}</small>
             </div>
             <div class="acoes-evento">
                 <button class="btn-editar" onclick="event.stopPropagation(); editarEventoDoResultado('${a.id}')">✎</button>
@@ -403,8 +408,7 @@ window.editarEventoDoResultado = (id) => {
         const selectCor = document.getElementById('event-color');
         selectCor.value = item.cor || 'normal';
         window.atualizarCorDoSelect(); // Pinta a caixinha na hora!
-        // --------------------------
-        
+
         database.ref('agendamentos/' + item.id).remove().then(() => {
             alert("Altere e salve.");
             document.getElementById('search-input').value = "";
@@ -426,21 +430,18 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 2. O Firebase já vai chamar o gerarCalendario() automaticamente 
     // assim que terminar de carregar os dados (pelo database.ref().on)
+    window.atualizarCorDoSelect(); // Garante que inicia com a cor certa preenchida
 });
 
 // Função para mudar a cor de fundo do próprio select na hora de criar o evento
 window.atualizarCorDoSelect = () => {
     const select = document.getElementById('event-color');
+    const corSelecionada = select.value; // Pega o código da cor (ex: #c02626)
     
-    if (select.value === 'urgente') {
-        select.style.backgroundColor = '#ff4d4d'; // Vermelho vivo
-        select.style.color = '#ffffff';           // Texto branco para dar leitura
-        select.style.borderColor = '#c02626';
-    } else {
-        select.style.backgroundColor = 'var(--cor-escura)';        // Volta pro fundo padrão do seu layout
-        select.style.color = '#ffff';                  // Volta pra cor de texto padrão
-        select.style.borderColor = '';
-    }
+    // Aplica a cor de fundo dinamicamente
+    select.style.backgroundColor = corSelecionada;
+    select.style.color = '#ffffff'; // Deixa o texto sempre branco para dar leitura
+    select.style.borderColor = corSelecionada;
 };
 
 // Função para mostrar notificações automáticas que somem sozinhas
